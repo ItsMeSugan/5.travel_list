@@ -1,14 +1,7 @@
 import { useState } from "react";
 
-// const initialItems = [
-//   { id: 1, description: "Passports", quantity: 2, packed: false },
-//   { id: 2, description: "Socks", quantity: 12, packed: false },
-//   { id: 3, description: "charger", quantity: 1, packed: true },
-// ];
-
 export default function App() {
   const [items, setItems] = useState([]); // initial state as array
-
   function handleAddItems(item) {
     setItems((items) => [...items, item]);
   }
@@ -25,6 +18,13 @@ export default function App() {
     );
   }
 
+  function handleClearList() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all items ?"
+    );
+    if (confirmed) setItems([]);
+  }
+
   return (
     <div className="app">
       <Logo />
@@ -33,6 +33,7 @@ export default function App() {
         items={items}
         onDeleteItem={handleDeleteItem}
         onToggleItem={handleToggleItem}
+        onClearClist={handleClearList}
       />
       <Stats items={items} />
     </div>
@@ -83,7 +84,7 @@ function Form({ onAddItems }) {
     </form>
   );
 }
-function PackingList({ items, onDeleteItem, onToggleItem }) {
+function PackingList({ items, onDeleteItem, onToggleItem, onClearClist }) {
   const [sortBy, setSortBy] = useState("input");
   let sortedItems;
 
@@ -101,7 +102,7 @@ function PackingList({ items, onDeleteItem, onToggleItem }) {
   return (
     <div className="list">
       <ul>
-        {items.map((item) => (
+        {sortedItems.map((item) => (
           <Item
             item={item}
             onDeleteItem={onDeleteItem}
@@ -111,11 +112,12 @@ function PackingList({ items, onDeleteItem, onToggleItem }) {
         ))}
       </ul>
       <div className="actions">
-        <select value={sortBy}>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           <option value="input">Sort by input order</option>
           <option value="description">Sort by description</option>
           <option value="packed">Sort by Packed status</option>
         </select>
+        <button onClick={onClearClist}>Clear list</button>
       </div>
     </div>
   );
